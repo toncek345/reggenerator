@@ -26,8 +26,13 @@ type parsedToken struct {
 
 func parse(tokens []*token) ([]*parsedToken, error) {
 	parsedTokens := make([]*parsedToken, 0, len(tokens))
+
 	for _, t := range tokens {
-		// TODO: if there is no character limit, add any character as a first case
+
+		if t.anyCharacter {
+			parsedTokens = append(parsedTokens, &parsedToken{possibleCharacters: possibleCharArray})
+			continue
+		}
 
 		switch len(t.charRange) {
 		case 0:

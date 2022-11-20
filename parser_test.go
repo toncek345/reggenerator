@@ -25,14 +25,6 @@ func TestParse(t *testing.T) {
 		}
 	}
 
-	allCharacters := make([]byte, 0, ('z'-'a')*2)
-	for i := 'a'; i <= 'z'; i++ {
-		allCharacters = append(allCharacters, byte(i))
-	}
-	for i := 'A'; i <= 'Z'; i++ {
-		allCharacters = append(allCharacters, byte(i))
-	}
-
 	tests := []struct {
 		name        string
 		tokens      []*token
@@ -142,12 +134,25 @@ func TestParse(t *testing.T) {
 			name: "negation",
 			expectedOut: []*parsedToken{
 				{
-					possibleCharacters: allCharacters[:len(allCharacters)-1],
+					possibleCharacters: possibleCharArray[:len(possibleCharArray)-1],
 				},
 			},
 			tokens: []*token{
 				{
-					charRange: "^Z",
+					charRange: "^~",
+				},
+			},
+		},
+		{
+			name: "any char",
+			expectedOut: []*parsedToken{
+				{
+					possibleCharacters: possibleCharArray,
+				},
+			},
+			tokens: []*token{
+				{
+					anyCharacter: true,
 				},
 			},
 		},
