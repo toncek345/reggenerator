@@ -88,10 +88,7 @@ func TestTokenize(t *testing.T) {
 					charRange: "-",
 				},
 				{
-					charRange: "?",
-				},
-				{
-					charRange: ".",
+					charRange: "?.",
 				},
 				{
 					charRange: ",",
