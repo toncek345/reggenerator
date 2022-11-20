@@ -119,7 +119,8 @@ func readSecondRangePart(reader *bufio.Reader) (byte, error) {
 
 // byteRange return the char range from first to second character.
 func byteRange(first, second byte) ([]byte, error) {
-	if unicode.IsLower(rune(first)) && unicode.IsLower(rune(second)) ||
+	if unicode.IsNumber(rune(first)) && unicode.IsNumber(rune(second)) ||
+		unicode.IsLower(rune(first)) && unicode.IsLower(rune(second)) ||
 		unicode.IsUpper(rune(first)) && unicode.IsUpper(rune(second)) {
 
 		byteRange := make([]byte, 0, second-first+1)

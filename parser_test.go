@@ -95,6 +95,19 @@ func TestParse(t *testing.T) {
 			},
 		},
 		{
+			name: "single token, range numbers",
+			expectedOut: []*parsedToken{
+				{
+					possibleCharacters: []byte{'1', '2', '3'},
+				},
+			},
+			tokens: []*token{
+				{
+					charRange: "1-3",
+				},
+			},
+		},
+		{
 			name: "single token, range & single letter that is already in the range",
 			expectedOut: []*parsedToken{
 				{
