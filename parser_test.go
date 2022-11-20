@@ -21,7 +21,10 @@ func TestParse(t *testing.T) {
 				}
 			}
 
-			// TODO: check quantifier
+			if expected[i].quantifier.min != actual[i].quantifier.min ||
+				expected[i].quantifier.max != actual[i].quantifier.max {
+				t.Fatalf("quantifier expected: %#v ; got: %#v", expected[i].quantifier, actual[i].quantifier)
+			}
 		}
 	}
 
@@ -41,6 +44,26 @@ func TestParse(t *testing.T) {
 			},
 		},
 		{
+			name:      "invalid quantifier",
+			shouldErr: true,
+			tokens: []*token{
+				{
+					anyCharacter: true,
+					quantifier:   "f",
+				},
+			},
+		},
+		{
+			name:      "invalid quantifier 2",
+			shouldErr: true,
+			tokens: []*token{
+				{
+					anyCharacter: true,
+					quantifier:   ",1",
+				},
+			},
+		},
+		{
 			name:      "invalid range",
 			shouldErr: true,
 			tokens: []*token{
@@ -54,6 +77,7 @@ func TestParse(t *testing.T) {
 			expectedOut: []*parsedToken{
 				{
 					possibleCharacters: []byte{'a'},
+					quantifier:         quantifier{min: 1, max: 1},
 				},
 			},
 			tokens: []*token{
@@ -63,13 +87,45 @@ func TestParse(t *testing.T) {
 			},
 		},
 		{
+			name: "single letter; single token; valid quantifier",
+			expectedOut: []*parsedToken{
+				{
+					possibleCharacters: []byte{'a'},
+					quantifier:         quantifier{min: 1, max: 2},
+				},
+			},
+			tokens: []*token{
+				{
+					charRange:  "a",
+					quantifier: "1,2",
+				},
+			},
+		},
+		{
+			name: "single letter; single token; valid quantifier 2",
+			expectedOut: []*parsedToken{
+				{
+					possibleCharacters: []byte{'a'},
+					quantifier:         quantifier{min: 2, max: 2},
+				},
+			},
+			tokens: []*token{
+				{
+					charRange:  "a",
+					quantifier: "2",
+				},
+			},
+		},
+		{
 			name: "single letter; multiple tokens",
 			expectedOut: []*parsedToken{
 				{
 					possibleCharacters: []byte{'a'},
+					quantifier:         quantifier{min: 1, max: 1},
 				},
 				{
 					possibleCharacters: []byte{'b'},
+					quantifier:         quantifier{min: 1, max: 1},
 				},
 			},
 			tokens: []*token{
@@ -86,6 +142,7 @@ func TestParse(t *testing.T) {
 			expectedOut: []*parsedToken{
 				{
 					possibleCharacters: []byte{'a', 'b', 'c'},
+					quantifier:         quantifier{min: 1, max: 1},
 				},
 			},
 			tokens: []*token{
@@ -99,6 +156,7 @@ func TestParse(t *testing.T) {
 			expectedOut: []*parsedToken{
 				{
 					possibleCharacters: []byte{'1', '2', '3'},
+					quantifier:         quantifier{min: 1, max: 1},
 				},
 			},
 			tokens: []*token{
@@ -112,6 +170,7 @@ func TestParse(t *testing.T) {
 			expectedOut: []*parsedToken{
 				{
 					possibleCharacters: []byte{'a', 'b', 'c'},
+					quantifier:         quantifier{min: 1, max: 1},
 				},
 			},
 			tokens: []*token{
@@ -125,6 +184,7 @@ func TestParse(t *testing.T) {
 			expectedOut: []*parsedToken{
 				{
 					possibleCharacters: []byte{'t', 'a', 'b', 'c'},
+					quantifier:         quantifier{min: 1, max: 1},
 				},
 			},
 			tokens: []*token{
@@ -138,9 +198,11 @@ func TestParse(t *testing.T) {
 			expectedOut: []*parsedToken{
 				{
 					possibleCharacters: []byte{'a', 'b', 'c'},
+					quantifier:         quantifier{min: 1, max: 1},
 				},
 				{
 					possibleCharacters: []byte{'e', 'f', 'g'},
+					quantifier:         quantifier{min: 1, max: 1},
 				},
 			},
 			tokens: []*token{
@@ -157,6 +219,7 @@ func TestParse(t *testing.T) {
 			expectedOut: []*parsedToken{
 				{
 					possibleCharacters: possibleCharArray[:len(possibleCharArray)-1],
+					quantifier:         quantifier{min: 1, max: 1},
 				},
 			},
 			tokens: []*token{
@@ -170,6 +233,7 @@ func TestParse(t *testing.T) {
 			expectedOut: []*parsedToken{
 				{
 					possibleCharacters: possibleCharArray,
+					quantifier:         quantifier{min: 1, max: 1},
 				},
 			},
 			tokens: []*token{

@@ -5,6 +5,8 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"strconv"
+	"strings"
 	"unicode"
 )
 
@@ -20,17 +22,27 @@ func init() {
 	}
 }
 
+type quantifier struct {
+	min int
+	max int
+}
+
 type parsedToken struct {
 	possibleCharacters []byte
+	quantifier         quantifier
 }
 
 func parse(tokens []*token) ([]*parsedToken, error) {
 	parsedTokens := make([]*parsedToken, 0, len(tokens))
 
 	for _, t := range tokens {
+		quantifier, err := parseQuantifier(t.quantifier)
+		if err != nil {
+			return nil, fmt.Errorf("parsing quantifier: %w", err)
+		}
 
 		if t.anyCharacter {
-			parsedTokens = append(parsedTokens, &parsedToken{possibleCharacters: possibleCharArray})
+			parsedTokens = append(parsedTokens, &parsedToken{possibleCharacters: possibleCharArray, quantifier: quantifier})
 			continue
 		}
 
@@ -38,7 +50,7 @@ func parse(tokens []*token) ([]*parsedToken, error) {
 		case 0:
 			return nil, fmt.Errorf("char range is 0, something is terribly wrong")
 		case 1:
-			t := &parsedToken{possibleCharacters: []byte{t.charRange[0]}}
+			t := &parsedToken{possibleCharacters: []byte{t.charRange[0]}, quantifier: quantifier}
 			parsedTokens = append(parsedTokens, t)
 			continue
 		}
@@ -51,7 +63,7 @@ func parse(tokens []*token) ([]*parsedToken, error) {
 		}
 
 		reader := bufio.NewReader(bytes.NewReader([]byte(charRange)))
-		parsed := new(parsedToken)
+		parsed := &parsedToken{quantifier: quantifier}
 		for {
 			byte, err := reader.ReadByte()
 			if err != nil {
@@ -85,7 +97,6 @@ func parse(tokens []*token) ([]*parsedToken, error) {
 			parsed.possibleCharacters = append(parsed.possibleCharacters, bytes...)
 		}
 
-		// TODO: do not forget about quantifier
 		if negate {
 			parsed.possibleCharacters = negateCharacters(parsed.possibleCharacters)
 		}
@@ -95,6 +106,30 @@ func parse(tokens []*token) ([]*parsedToken, error) {
 	}
 
 	return parsedTokens, nil
+}
+
+func parseQuantifier(str string) (quantifier, error) {
+	if str == "" {
+		return quantifier{min: 1, max: 1}, nil
+	}
+
+	s := strings.Split(str, ",")
+
+	n, err := strconv.Atoi(s[0])
+	if err != nil {
+		return quantifier{}, fmt.Errorf("parsing quantifier to int: %w", err)
+	}
+
+	if len(s) == 1 {
+		return quantifier{min: n, max: n}, nil
+	}
+
+	n2, err := strconv.Atoi(s[1])
+	if err != nil {
+		return quantifier{}, fmt.Errorf("parsing quantifier to int: %w", err)
+	}
+
+	return quantifier{min: n, max: n2}, nil
 }
 
 func isRange(char byte) bool {
