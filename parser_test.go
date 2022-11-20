@@ -41,6 +41,15 @@ func TestParse(t *testing.T) {
 			},
 		},
 		{
+			name:      "invalid range",
+			shouldErr: true,
+			tokens: []*token{
+				{
+					charRange: "a-",
+				},
+			},
+		},
+		{
 			name: "single letter; single token",
 			expectedOut: []*parsedToken{
 				{

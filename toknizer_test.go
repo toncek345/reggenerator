@@ -60,6 +60,11 @@ func TestTokenize(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name:      "invalid regex 3",
+			str:       "/[f-]{/",
+			shouldErr: true,
+		},
+		{
 			name: "single char",
 			str:  "/f/",
 			expected: []*token{
