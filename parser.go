@@ -11,13 +11,12 @@ import (
 var possibleCharArray []byte
 
 func init() {
-	// TODO: possible char array is bigger, including [],? etc...
-	possibleCharArray = make([]byte, 0, ('z'-'a')*2)
-	for i := 'a'; i <= 'z'; i++ {
-		possibleCharArray = append(possibleCharArray, byte(i))
-	}
-	for i := 'A'; i <= 'Z'; i++ {
-		possibleCharArray = append(possibleCharArray, byte(i))
+	possibleCharArray = make([]byte, 0, 128)
+
+	for i := 0; i < 128; i++ {
+		if !unicode.IsSpace(rune(i)) && unicode.IsPrint(rune(i)) {
+			possibleCharArray = append(possibleCharArray, byte(i))
+		}
 	}
 }
 
