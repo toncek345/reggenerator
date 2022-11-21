@@ -26,6 +26,28 @@ func TestGenerate(t *testing.T) {
 			count:    1,
 		},
 		{
+			name: "generate random possibility",
+			randomFn: func() func() int {
+				return func() int {
+					return 2
+				}
+			},
+			regex:    "/g?/",
+			expected: []string{""},
+			count:    1,
+		},
+		{
+			name: "generate random possibility2",
+			randomFn: func() func() int {
+				return func() int {
+					return 1
+				}
+			},
+			regex:    "/g?/",
+			expected: []string{"g"},
+			count:    1,
+		},
+		{
 			name: "generate with char range",
 			randomFn: func() func() int {
 				i := 1

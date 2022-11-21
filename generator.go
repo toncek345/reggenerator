@@ -29,7 +29,7 @@ func Generate(regex string, count int) ([]string, error) {
 		g.Go(func() error {
 			s := strings.Builder{}
 			for _, t := range parsedTokens {
-				_, err := s.Write(generatePart(t.possibleCharacters, t.quantifier.min, t.quantifier.max))
+				_, err := s.Write(generatePart(t.possibleCharacters, t.quantifier))
 				if err != nil {
 					return fmt.Errorf("writing to string builder: %w", err)
 				}
@@ -57,12 +57,16 @@ func Generate(regex string, count int) ([]string, error) {
 	return generated, err
 }
 
-func generatePart(charList []byte, repetitionMin, repetitionMax int) []byte {
-	count := repetitionMax // Fixed number of generations
+func generatePart(charList []byte, quantifier quantifier) []byte {
+	if quantifier.randomPossibility && RandFn()%2 == 0 {
+		return nil
+	}
 
-	if repetitionMax != repetitionMin {
+	count := quantifier.max // Fixed number of generations
+
+	if quantifier.max != quantifier.min {
 		// Generation range {1,3}
-		count = (RandFn() % (repetitionMax - repetitionMin + 1)) + repetitionMin
+		count = (RandFn() % (quantifier.max - quantifier.min + 1)) + quantifier.min
 	}
 
 	bytes := make([]byte, 0, count)

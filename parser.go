@@ -23,8 +23,9 @@ func init() {
 }
 
 type quantifier struct {
-	min int
-	max int
+	min               int
+	max               int
+	randomPossibility bool
 }
 
 type parsedToken struct {
@@ -109,8 +110,11 @@ func parse(tokens []*token) ([]*parsedToken, error) {
 }
 
 func parseQuantifier(str string) (quantifier, error) {
-	if str == "" {
+	switch str {
+	case "":
 		return quantifier{min: 1, max: 1}, nil
+	case "?":
+		return quantifier{min: 1, max: 1, randomPossibility: true}, nil
 	}
 
 	s := strings.Split(str, ",")

@@ -87,6 +87,21 @@ func TestParse(t *testing.T) {
 			},
 		},
 		{
+			name: "single letter; random possibility",
+			expectedOut: []*parsedToken{
+				{
+					possibleCharacters: []byte{'a'},
+					quantifier:         quantifier{min: 1, max: 1, randomPossibility: true},
+				},
+			},
+			tokens: []*token{
+				{
+					charRange:  "a",
+					quantifier: "?",
+				},
+			},
+		},
+		{
 			name: "single letter; single token; valid quantifier",
 			expectedOut: []*parsedToken{
 				{
