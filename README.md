@@ -3,11 +3,35 @@ Generate random string based on supplied regex
 
 ## Quick start
 
-Clone and run as binary as `go run cmd/main -regex="/something/" -count=2` or include as a library  
-and supply arguments to `Generate(regex string, count int)` function.
+### Lib
 
-If using as a library you can supply your own random function  
-`reggenerator.RandFn = randomFn`. Otherwise `math.Int()` is being used.
+`go get github.com/toncek345/reggenerator`  
+Import and call `Generate(regex string, count int)`.  
+
+If the random generation function is not being changed, `rand.Int` will be used.  
+Seeding with `rand.Seed(time.Now().UnixNano())` is then recommended.
+
+#### How to change the random number generation
+
+```go
+reggenerator.RandFn = randomFn
+---
+reggenerator.RandFn = func() int { return X }
+```
+
+### Standalone
+
+`go install github.com/toncek345/reggenerator/reggenerator@v1.1.0`
+```
+> reggenerator --help
+Usage of cmd:
+  -count int
+    	number of random string (default 1)
+  -regex string
+    	regex for random string
+
+```
+
 
 ## Syntax
 
